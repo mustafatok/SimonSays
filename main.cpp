@@ -14,7 +14,7 @@
 #include "DrawPrimitives.hpp"
 #include "PoseEstimation.hpp"
 #include "MarkerTracker.hpp"
-
+#define BUTTON_SIZE 4
 
 using namespace std;
 
@@ -128,6 +128,9 @@ void display_buttons(std::vector<Marker> &markers){
 	}
     
 }
+void display_countDown(){
+    
+}
 
 void reshape( GLFWwindow* window, int width, int height ) {
     
@@ -148,6 +151,22 @@ void reshape( GLFWwindow* window, int width, int height ) {
     
 }
 
+cv::Mat getCameraImage(){
+    cv::Mat img_bgr, tmp;
+    /* Capture here */
+    cap >> img_bgr;
+    
+    resize(img_bgr, tmp, cv::Size(640, 480));
+    img_bgr = tmp;
+    
+    
+    if(img_bgr.empty()){
+        std::cout << "Could not query frame. Trying to reinitialize." << std::endl;
+        initVideoStream(cap);
+        cv::waitKey(1000); /// Wait for one sec.
+    }
+    return img_bgr;
+}
 
 int main(int argc, char* argv[])
 {
@@ -190,31 +209,27 @@ int main(int argc, char* argv[])
 	
 	std::vector<Marker> markers;
 	/* Loop until the user closes the window */
+    
+    bool gameStarted = false;
 	while (!glfwWindowShouldClose(window))
 	{
 		markers.resize(0);
-		/* Capture here */
-		cap >> img_bgr;
-        
-        cv::Mat tmp;
-        resize(img_bgr, tmp, cv::Size(640, 480));
-        img_bgr = tmp;
-        
 
-		if(img_bgr.empty()){
-			std::cout << "Could not query frame. Trying to reinitialize." << std::endl;
-			initVideoStream(cap);
-			cv::waitKey(1000); /// Wait for one sec.
-			continue;
-		}
-        
-		/* Track a marker */
-		markerTracker.findMarker( img_bgr, markers);
-        
-		/* Render here */
-		display_background(window, img_bgr);
+        img_bgr = getCameraImage();
+        if(img_bgr.empty()){
+            continue;
+        }
+        display_background(window, img_bgr);
+
+        /* Track a marker */
+		markerTracker.findMarker(img_bgr, markers);
         display_buttons(markers);
         
+        if(markers.size() == BUTTON_SIZE && !gameStarted){
+            gameStarted = true;
+            display_countDown();
+        }
+		      
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
         
