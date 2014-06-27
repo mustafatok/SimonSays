@@ -2,9 +2,6 @@
 //  DrawPrimitives.cpp
 //  SimonSays
 //
-//  Created by mustafa tok on 6/27/14.
-//  Copyright (c) 2014 Mustafa Tok. All rights reserved.
-//
 
 #include "DrawPrimitives.hpp"
 

@@ -24,7 +24,6 @@ using namespace std;
 cv::VideoCapture cap;
 
 
-struct Position { double x,y,z; };
 
 float resultTransposedMatrix[16];
 
