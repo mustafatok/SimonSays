@@ -28,6 +28,8 @@ void DisplayCallbacks::score(int score){
 }
 
 SimonSays::SimonSays(){
+    srand(time(NULL));
+    displayCallback = this;
     setStarted(false);
     _inputState = 0;
     _row = -1;
@@ -59,7 +61,7 @@ bool SimonSays::isInputState(){
     return _inputState;
 }
 
-std::vector<int> SimonSays::colorSequence(){    
+std::vector<int> SimonSays::colorSequence(){
     if(_gameOver){
         _score = 0;
         _gameOver = false;
@@ -109,37 +111,37 @@ void SimonSays::keyboardHandler(int Key)
 {
     switch(Key)
     {
-        case GLFW_KEY_S: handleInput(START_MARKER, this); break;
-        case GLFW_KEY_R: handleInput(COLOR_RED, this); break;
-        case GLFW_KEY_G: handleInput(COLOR_GREEN, this); break;
-        case GLFW_KEY_B: handleInput(COLOR_BLUE, this); break;
-        case GLFW_KEY_Y: handleInput(COLOR_YELLOW, this); break;
+        case GLFW_KEY_S: handleInput(START_MARKER); break;
+        case GLFW_KEY_R: handleInput(COLOR_RED); break;
+        case GLFW_KEY_G: handleInput(COLOR_GREEN); break;
+        case GLFW_KEY_B: handleInput(COLOR_BLUE); break;
+        case GLFW_KEY_Y: handleInput(COLOR_YELLOW); break;
         case GLFW_KEY_ESCAPE:
             exit(1); 
             break;
     };
 }
 
-void SimonSays::handleInput(int buttonId, DisplayCallbacks* displayCallBack){
+void SimonSays::handleInput(int buttonId){
     
     if (buttonId == START_MARKER) {
         setStarted(true);
-        displayCallBack->countDown();
-        displayCallBack->colorSequence(colorSequence());
+        displayCallback->countDown();
+        displayCallback->colorSequence(colorSequence());
     }else{
         if(isStarted()){
             if(!isInputState()){
                 std::cout << "Seq" << std::endl;
-                displayCallBack->colorSequence(colorSequence());
+                displayCallback->colorSequence(colorSequence());
             }else{
                 processInput(buttonId);
                 if(_gameOver){
-                    displayCallBack->gameOver();
+                    displayCallback->gameOver();
                 }else{
-                    displayCallBack->score(score());
+                    displayCallback->score(score());
                     if(!isInputState()){
                         std::cout << "Seq" << std::endl;
-                        displayCallBack->colorSequence(colorSequence());
+                        displayCallback->colorSequence(colorSequence());
                     }
                 }
             }
@@ -147,7 +149,9 @@ void SimonSays::handleInput(int buttonId, DisplayCallbacks* displayCallBack){
     }
     
 }
-
+void SimonSays::setDisplayCallback(DisplayCallbacks* displayCallback){
+    this->displayCallback = displayCallback;
+}
 
 
 

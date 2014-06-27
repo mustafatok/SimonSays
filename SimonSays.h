@@ -25,6 +25,7 @@ private:
     bool _inputState;
     bool _gameOver;
     ColorSequence colorSeq;
+    DisplayCallbacks* displayCallback;
 public:
     SimonSays();
     bool isStarted();
@@ -37,8 +38,8 @@ public:
     void processInput(int colorId);
     void gameOver();
     bool isGameOver();
-    void handleInput(int buttonId, DisplayCallbacks* displayCallBack);
-
+    void handleInput(int buttonId);
+    void setDisplayCallback(DisplayCallbacks* displayCallback);
     void keyboardHandler(int Key);
 
 

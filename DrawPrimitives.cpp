@@ -72,6 +72,8 @@ void drawButton(int const colorId){
         glColor4f( 0.0, 0.0, 1.0, 1.0 );
     else if(colorId==COLOR_YELLOW)
         glColor4f( 1.0, 1.0, 0.0, 1.0 );
+    else if(colorId==START_MARKER)
+        glColor4f( 0.0, 1.0, 1.0, 1.0 );
     glTranslatef( 0.0, 0.0, 0.0 );
     drawCube(  );
 }
