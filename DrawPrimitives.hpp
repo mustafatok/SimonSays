@@ -10,7 +10,11 @@
 #define COLOR_GREEN 2
 #define COLOR_BLUE 3
 #define COLOR_YELLOW 4
+#define START_MARKER 9
 
+#include <vector>
+
+typedef std::vector<int> ColorSequence;
 
 void drawCube();
 void drawButton(int const colorId);

@@ -8,6 +8,7 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -16,7 +17,7 @@
 #include "MarkerTracker.hpp"
 #include "SimonSays.h"
 
-#define BUTTON_SIZE 4
+#define BUTTON_SIZE 5
 
 using namespace std;
 
@@ -32,6 +33,14 @@ const int camera_width  = 640;
 const int camera_height = 480;
 const int virtual_camera_angle = 60;
 unsigned char bkgnd[camera_width*camera_height*3];
+
+
+
+SimonSays game;
+
+
+
+
 
 
 void initVideoStream( cv::VideoCapture &cap ) {
@@ -133,18 +142,6 @@ void display_buttons(std::vector<Marker> &markers){
 void display_countDown(){
     std::cout << "Ctdown" << std::endl;
 }
-void display_sequence(std::vector<int> colorSeq){
-    for (int i = 0; i < colorSeq.size(); ++i) {
-        string str;
-        str += colorSeq.at(i) == COLOR_RED?"R":"";
-        str += colorSeq.at(i) == COLOR_GREEN?"G":"";
-        str += colorSeq.at(i) == COLOR_BLUE?"B":"";
-        str += colorSeq.at(i) == COLOR_YELLOW?"Y":"";
-        std::cout << str << " ";
-    }
-    std::cout << std::endl;
-}
-
 
 void reshape( GLFWwindow* window, int width, int height ) {
     
@@ -182,20 +179,45 @@ cv::Mat getCameraImage(){
     return img_bgr;
 }
 
-int getColor(std::vector<Marker> &markers){
-
-    if(markers.size() != 3)
+int buttonToKeyAdapter(int buttonId){
+    if(buttonId == START_MARKER){
+        return GLFW_KEY_S;
+    }else if(buttonId == COLOR_RED){
+        return GLFW_KEY_R;
+    }else if(buttonId == COLOR_GREEN){
+        return GLFW_KEY_G;
+    }else if(buttonId == COLOR_BLUE){
+        return GLFW_KEY_B;
+    }else if(buttonId == COLOR_YELLOW){
+        return GLFW_KEY_Y;
+    }
+    return GLFW_KEY_ENTER;
+}
+int getButtonKey(std::vector<Marker> &markers){
+    if(markers.size() != BUTTON_SIZE - 1)
         return -1;
     
-    int color = COLOR_RED ^ COLOR_GREEN ^ COLOR_BLUE ^ COLOR_YELLOW;
+    int color = COLOR_RED ^ COLOR_GREEN ^ COLOR_BLUE ^ COLOR_YELLOW ^ START_MARKER;
     for (int i = 0; i < markers.size(); ++i) {
         color = color ^ markers.at(i).colorID;
     }
-    return color;
+    return buttonToKeyAdapter(color);
 }
+
+
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+    if(action != GLFW_PRESS){
+        return;
+    }
+    std::cout << key << std::endl;
+
+   	game.keyboardHandler(key);
+}
+
 int main(int argc, char* argv[])
 {
-    
+
 	GLFWwindow* window;
     
 	/* Initialize the library */
@@ -215,6 +237,8 @@ int main(int argc, char* argv[])
 	glfwSetFramebufferSizeCallback(window, reshape);
     
 	glfwMakeContextCurrent(window);
+    glfwSetKeyCallback(window, key_callback);
+
 	glfwSwapInterval( 1 );
 	
 	int window_width, window_height;
@@ -226,6 +250,8 @@ int main(int argc, char* argv[])
 	// initialize the GL library
 	initGL(argc, argv);
     
+
+    
     // setup OpenCV
 	cv::Mat img_bgr;
 	initVideoStream(cap);
@@ -235,10 +261,8 @@ int main(int argc, char* argv[])
 	std::vector<Marker> markers;
 	/* Loop until the user closes the window */
     
-    SimonSays game;
-    std::vector<int> colorSeq;
-    bool buttonPressed = true;
-    int color = 0;
+    bool buttonPressed = false;
+
     while (!glfwWindowShouldClose(window)){
 		markers.clear();
         img_bgr = getCameraImage();
@@ -251,37 +275,20 @@ int main(int argc, char* argv[])
 		markerTracker.findMarker(img_bgr, markers);
         display_buttons(markers);
         
+        if(markers.size() == BUTTON_SIZE){
+            buttonPressed = false;
+        }else{
+            if(!buttonPressed){
+                int key = getButtonKey(markers);
+                std::cout << key << std::endl;
 
-        
-        if(markers.size() == BUTTON_SIZE && !game.isStarted()){
-            game.setStarted(true);
-            display_countDown();
-        }
-        
-        if(game.isStarted()){
-            
-            if(!game.isInputState()){
-                std::cout << "Seq" << std::endl;
-                colorSeq.clear();
-                colorSeq = game.colorSequence();
-                display_sequence(colorSeq);
-            }else{
-                if(!buttonPressed){
-                    color = getColor(markers);
-                    if(color != 0 && color != -1){
-                        game.processInput(color);
-                    }
+                if(key != GLFW_KEY_ENTER){
+                    game.keyboardHandler(key);
                     buttonPressed = true;
                 }
             }
-            
-        }
-        if(markers.size() == BUTTON_SIZE){
-            buttonPressed = false;
         }
         
-       
-
 		      
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

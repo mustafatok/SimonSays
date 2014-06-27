@@ -419,6 +419,8 @@ void MarkerTracker::findMarker( cv::Mat &img_bgr, std::vector<Marker> &markers )
                 marker.colorID = COLOR_GREEN;
             }else if(code == 0x0b44){
                 marker.colorID = COLOR_YELLOW;
+            }else if(code == 0x005a){
+                marker.colorID = START_MARKER;
             }else{
                 continue;
             }

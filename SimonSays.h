@@ -8,13 +8,23 @@
 
 #include <iostream>
 #include <vector>
-class SimonSays {
+#include "DrawPrimitives.hpp"
+
+class DisplayCallbacks{
+public:
+    void countDown();
+    void colorSequence(ColorSequence colorSeq);
+    void gameOver();
+    void score(int score);
+
+};
+class SimonSays : public DisplayCallbacks{
 private:
     int _row, _score;
     bool _isStarted;
     bool _inputState;
     bool _gameOver;
-    std::vector<int> colorSeq;
+    ColorSequence colorSeq;
 public:
     SimonSays();
     bool isStarted();
@@ -23,8 +33,15 @@ public:
     int row();
     int score();
     int randomColor();
-    std::vector<int> colorSequence();
+    ColorSequence colorSequence();
     void processInput(int colorId);
+    void gameOver();
+    bool isGameOver();
+    void handleInput(int buttonId, DisplayCallbacks* displayCallBack);
+
+    void keyboardHandler(int Key);
+
+
 };
 
 
