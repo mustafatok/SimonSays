@@ -14,6 +14,8 @@
 #include "DrawPrimitives.hpp"
 #include "PoseEstimation.hpp"
 #include "MarkerTracker.hpp"
+#include "SimonSays.h"
+
 #define BUTTON_SIZE 4
 
 using namespace std;
@@ -129,8 +131,20 @@ void display_buttons(std::vector<Marker> &markers){
     
 }
 void display_countDown(){
-    
+    std::cout << "Ctdown" << std::endl;
 }
+void display_sequence(std::vector<int> colorSeq){
+    for (int i = 0; i < colorSeq.size(); ++i) {
+        string str;
+        str += colorSeq.at(i) == COLOR_RED?"R":"";
+        str += colorSeq.at(i) == COLOR_GREEN?"G":"";
+        str += colorSeq.at(i) == COLOR_BLUE?"B":"";
+        str += colorSeq.at(i) == COLOR_YELLOW?"Y":"";
+        std::cout << str << " ";
+    }
+    std::cout << std::endl;
+}
+
 
 void reshape( GLFWwindow* window, int width, int height ) {
     
@@ -168,6 +182,17 @@ cv::Mat getCameraImage(){
     return img_bgr;
 }
 
+int getColor(std::vector<Marker> &markers){
+
+    if(markers.size() != 3)
+        return -1;
+    
+    int color = COLOR_RED ^ COLOR_GREEN ^ COLOR_BLUE ^ COLOR_YELLOW;
+    for (int i = 0; i < markers.size(); ++i) {
+        color = color ^ markers.at(i).colorID;
+    }
+    return color;
+}
 int main(int argc, char* argv[])
 {
     
@@ -210,11 +235,12 @@ int main(int argc, char* argv[])
 	std::vector<Marker> markers;
 	/* Loop until the user closes the window */
     
-    bool gameStarted = false;
-	while (!glfwWindowShouldClose(window))
-	{
-		markers.resize(0);
-
+    SimonSays game;
+    std::vector<int> colorSeq;
+    bool buttonPressed = true;
+    int color = 0;
+    while (!glfwWindowShouldClose(window)){
+		markers.clear();
         img_bgr = getCameraImage();
         if(img_bgr.empty()){
             continue;
@@ -225,10 +251,37 @@ int main(int argc, char* argv[])
 		markerTracker.findMarker(img_bgr, markers);
         display_buttons(markers);
         
-        if(markers.size() == BUTTON_SIZE && !gameStarted){
-            gameStarted = true;
+
+        
+        if(markers.size() == BUTTON_SIZE && !game.isStarted()){
+            game.setStarted(true);
             display_countDown();
         }
+        
+        if(game.isStarted()){
+            
+            if(!game.isInputState()){
+                std::cout << "Seq" << std::endl;
+                colorSeq.clear();
+                colorSeq = game.colorSequence();
+                display_sequence(colorSeq);
+            }else{
+                if(!buttonPressed){
+                    color = getColor(markers);
+                    if(color != 0 && color != -1){
+                        game.processInput(color);
+                    }
+                    buttonPressed = true;
+                }
+            }
+            
+        }
+        if(markers.size() == BUTTON_SIZE){
+            buttonPressed = false;
+        }
+        
+       
+
 		      
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

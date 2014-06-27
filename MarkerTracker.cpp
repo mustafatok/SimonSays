@@ -386,7 +386,7 @@ void MarkerTracker::findMarker( cv::Mat &img_bgr, std::vector<Marker> &markers )
 				}
 			}
 
-			printf ("Found: %04x\n", code);
+//			printf ("Found: %04x\n", code);
 
 			if ( isFirstMarker )
 			{
@@ -416,9 +416,9 @@ void MarkerTracker::findMarker( cv::Mat &img_bgr, std::vector<Marker> &markers )
             }else if(code == 0x0272){
                 marker.colorID = COLOR_BLUE;
             }else if(code == 0x1c44){
-                marker.colorID = COLOR_YELLOW;
-            }else if(code == 0x0b44){
                 marker.colorID = COLOR_GREEN;
+            }else if(code == 0x0b44){
+                marker.colorID = COLOR_YELLOW;
             }else{
                 continue;
             }
