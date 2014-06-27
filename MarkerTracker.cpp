@@ -6,8 +6,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include "MarkerTracker.h"
-#include "PoseEstimation.h"
+#include "MarkerTracker.hpp"
+#include "PoseEstimation.hpp"
 
 void trackbarHandler( int pos, void* slider_value ) {
 	*( (int*)slider_value ) = pos;
@@ -411,7 +411,17 @@ void MarkerTracker::findMarker( cv::Mat &img_bgr, std::vector<Marker> &markers )
 			
 			Marker marker;
 			marker.code=code;
-
+            if(code == 0x1228) {
+                marker.colorID = COLOR_RED;
+            }else if(code == 0x0272){
+                marker.colorID = COLOR_BLUE;
+            }else if(code == 0x1c44){
+                marker.colorID = COLOR_YELLOW;
+            }else if(code == 0x0b44){
+                marker.colorID = COLOR_GREEN;
+            }else{
+                continue;
+            }
 
 			estimateSquarePose( marker.resultMatrix, (cv::Point2f*)corners, kMarkerSize );
 

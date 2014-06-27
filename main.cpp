@@ -2,7 +2,6 @@
 #define GLFW_INCLUDE_GLU
 #include <glfw/glfw3.h>
 //#include <GL/glew.h>
-#include "DrawPrimitives.h"
 #include <iostream>
 #include <iomanip>
 
@@ -12,8 +11,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include "PoseEstimation.h"
-#include "MarkerTracker.h"
+#include "DrawPrimitives.hpp"
+#include "PoseEstimation.hpp"
+#include "MarkerTracker.hpp"
+
 
 using namespace std;
 
@@ -120,47 +121,10 @@ void display_buttons(std::vector<Marker> &markers){
     // move to marker-position
     glMatrixMode( GL_MODELVIEW );
     
-	float resultMatrixRed[16]; //resultMatrix_1228
-	float resultMatrixBlue[16]; //resultMatrix_0272
-    float resultMatrixYellow[16]; //resultMatrix_1c44
-	float resultMatrixGreen[16]; //resultMatrix_0b44
-    
-    int cnt = 0;
-    
 	for(int i=0; i<markers.size(); i++){
-		const int code =markers[i].code;
-		if(code == 0x1228) {
-            ++cnt;
-			for(int j=0; j<16; j++)
-				resultMatrixRed[j] = markers[i].resultMatrix[j];
-            
-            transpose(resultMatrixRed, resultTransposedMatrix);
-            glLoadMatrixf( resultTransposedMatrix );
-            drawButton(COLOR_RED);
-		}else if(code == 0x0272){
-            ++cnt;
-			for(int j=0; j<16; j++)
-				resultMatrixBlue[j] = markers[i].resultMatrix[j];
-            
-            transpose(resultMatrixBlue, resultTransposedMatrix);
-            glLoadMatrixf( resultTransposedMatrix );
-            drawButton(COLOR_BLUE);
-		}else if(code == 0x1c44){
-            ++cnt;
-			for(int j=0; j<16; j++)
-				resultMatrixYellow[j] = markers[i].resultMatrix[j];
-            
-            transpose(resultMatrixYellow, resultTransposedMatrix);
-            glLoadMatrixf( resultTransposedMatrix );
-            drawButton(COLOR_YELLOW);
-		}else if(code == 0x0b44){
-            ++cnt;
-			for(int j=0; j<16; j++)
-				resultMatrixGreen[j] = markers[i].resultMatrix[j];
-            transpose(resultMatrixGreen, resultTransposedMatrix);
-            glLoadMatrixf( resultTransposedMatrix );
-            drawButton(COLOR_GREEN);
-		}
+        transpose(markers[i].resultMatrix, resultTransposedMatrix);
+        glLoadMatrixf( resultTransposedMatrix );
+        drawButton(markers[i].colorID);
 	}
     
 }

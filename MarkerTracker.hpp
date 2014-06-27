@@ -2,9 +2,11 @@
 #define MARKER_TRACKER_H
 
 #include <opencv/cv.h>
+#include "DrawPrimitives.hpp"
 
 struct Marker{
 	int code;
+    int colorID;
 	float resultMatrix[16];
 };
 
