@@ -31,21 +31,21 @@ SimonSays::SimonSays(){
     srand(time(NULL));
     displayCallback = this;
     setStarted(false);
+}
+bool SimonSays::isStarted(){
+    return _isStarted;
+}
+void SimonSays::initGame(){
+    colorSeq.clear();
+    _lives = 3;
     _inputState = false;
     _row = -1;
     _score = 0;
     _gameOver = false;
 }
-bool SimonSays::isStarted(){
-    return _isStarted;
-}
 void SimonSays::setStarted(bool started){
     if (started == true) {
-        colorSeq.clear();
-        _row = -1;
-        _score = 0;
-        _gameOver = false;
-        _inputState = false;
+        this->initGame();
     }
     this->_isStarted = started;
 }
@@ -65,22 +65,29 @@ bool SimonSays::isInputState(){
     return _inputState;
 }
 
-std::vector<int> SimonSays::colorSequence(){
+std::vector<int> SimonSays::colorSequence(bool const repeat = false){
+    _row = -1;
+    if(repeat)
+        return colorSeq;
     if(_gameOver){
         _score = 0;
         _gameOver = false;
         colorSeq.clear();
     }
-    _row = -1;
     colorSeq.push_back(randomColor());
     _inputState = true;
     return colorSeq;
 }
 void SimonSays::gameOver(){
-    _gameOver = true;
-    setStarted(false);
-    _inputState = false;
-}
+    if(--_lives <= 0){
+        _gameOver = true;
+        setStarted(false);
+        _inputState = false;
+    }else{
+        displayCallback->colorSequence(colorSequence(true));
+    }
+    _row = -1;
+   }
 bool SimonSays::isGameOver(){
     return _gameOver;
 }
@@ -139,7 +146,7 @@ void SimonSays::handleInput(int buttonId){
                 displayCallback->colorSequence(colorSequence());
             }else{
                 processInput(buttonId);
-                if(_gameOver){
+                if(isGameOver()){
                     displayCallback->gameOver();
                 }else{
                     displayCallback->score(score());
@@ -162,8 +169,23 @@ std::string SimonSays::getStatisticsScreen(){
     ss << "Score: " << score();
     std::string gameover = _gameOver ? " - Game Over":"";
     ss << gameover;
+    std::string tmp = "";
+    switch (_lives) {
+        case 3:
+            tmp += " |";
+        case 2:
+            tmp += " |";
+        case 1:
+            tmp += " |";
+        default:
+            break;
+    }
+    tmp = (tmp != "" ? " - " + tmp : "");
+    ss << tmp;
     return ss.str();
 }
 
 
-
+int SimonSays::getLives(){
+    return _lives;
+}

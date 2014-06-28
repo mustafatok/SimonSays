@@ -19,9 +19,11 @@ public:
     virtual void score(int score);
 
 };
+
+
 class SimonSays : public DisplayCallbacks{
 private:
-    int _row, _score;
+    int _row, _score, _lives;
     bool _isStarted;
     bool _inputState;
     bool _gameOver;
@@ -32,16 +34,18 @@ public:
     bool isStarted();
     void setStarted(bool started);
     bool isInputState();
+    void initGame();
     int row();
     int score();
     int randomColor();
-    ColorSequence colorSequence();
+    ColorSequence colorSequence(bool repeat);
     void processInput(int colorId);
     void gameOver();
     bool isGameOver();
     void handleInput(int buttonId);
     void setDisplayCallback(DisplayCallbacks* displayCallback);
     void keyboardHandler(int Key);
+    int getLives();
     std::string getStatisticsScreen();
 
 };

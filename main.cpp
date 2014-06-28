@@ -200,9 +200,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
    	game.keyboardHandler(key);
 }
-void task(){
-    ;
-}
 
 class MultimediaDisplayCallbacks : public DisplayCallbacks{
 private:
@@ -304,7 +301,6 @@ int main(int argc, char* argv[])
         
         cv::putText(img_bgr,  statistics, cv::Point(3,(camera_height - textSize.height/2 - 3)), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(255,255,255));
         display_background(window, img_bgr);
-
         /* Track a marker */
 		markerTracker.findMarker(img_bgr, markers);
         if(!displayingSequence)
