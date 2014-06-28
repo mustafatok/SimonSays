@@ -5,7 +5,6 @@
 
 #include "DrawPrimitives.hpp"
 #include <iostream>
-
 void drawCube() {
     
     // FRONT
