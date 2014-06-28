@@ -157,15 +157,14 @@ cv::Mat getCameraImage(){
     cap >> img_bgr;
     
     resize(img_bgr, tmp, cv::Size(640, 480));
-    img_bgr = tmp;
-    
     
     if(img_bgr.empty()){
         std::cout << "Could not query frame. Trying to reinitialize." << std::endl;
         initVideoStream(cap);
         cv::waitKey(1000); /// Wait for one sec.
     }
-    return img_bgr;
+    img_bgr.empty();
+    return tmp;
 }
 
 int buttonToKeyAdapter(int buttonId){
@@ -233,8 +232,11 @@ public:
             displayingSequence = false;
             return;
         }
-        int index = msecs / 350;   
-        display_buttons(markers, msecs < index*50 + (index+1)*300?currColorSeq.at(index):0);
+        int index = msecs / 350;
+        bool state = msecs < (index*50 + (index+1)*300);
+        
+        std::cout << "Msecs: " << msecs << " " << state << std::endl;
+        display_buttons(markers, state?currColorSeq.at(index):0);
     }
     void setMarkers(std::vector<Marker> markers){
         this->markers = markers;
