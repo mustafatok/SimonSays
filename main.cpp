@@ -16,13 +16,13 @@
 #include "PoseEstimation.hpp"
 #include "MarkerTracker.hpp"
 #include "SimonSays.h"
-
+#include <thread>
 #define BUTTON_SIZE 5
 
 using namespace std;
 
 cv::VideoCapture cap;
-
+bool displayingSequence = false;
 
 
 float resultTransposedMatrix[16];
@@ -33,14 +33,7 @@ const int camera_height = 480;
 const int virtual_camera_angle = 60;
 unsigned char bkgnd[camera_width*camera_height*3];
 
-
-
 SimonSays game;
-
-
-
-
-
 
 void initVideoStream( cv::VideoCapture &cap ) {
 	if( cap.isOpened() )
@@ -127,19 +120,16 @@ void display_background(GLFWwindow* window, const cv::Mat &img_bgr){
     glEnable(GL_DEPTH_TEST);
 
 }
-void display_buttons(std::vector<Marker> &markers){
+void display_buttons(std::vector<Marker> &markers, int highlightColorId = 0){
     // move to marker-position
     glMatrixMode( GL_MODELVIEW );
     
 	for(int i=0; i<markers.size(); i++){
         transpose(markers[i].resultMatrix, resultTransposedMatrix);
         glLoadMatrixf( resultTransposedMatrix );
-        drawButton(markers[i].colorID);
+        drawButton(markers[i].colorID, highlightColorId);
 	}
     
-}
-void display_countDown(){
-    std::cout << "Ctdown" << std::endl;
 }
 
 void reshape( GLFWwindow* window, int width, int height ) {
@@ -213,6 +203,43 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
    	game.keyboardHandler(key);
 }
+void task(){
+    ;
+}
+
+class MultimediaDisplayCallbacks : public DisplayCallbacks{
+private:
+    std::vector<Marker> markers;
+    clock_t begin;
+    ColorSequence currColorSeq;
+public:
+    MultimediaDisplayCallbacks(){
+        DisplayCallbacks();
+    }
+    void colorSequence(ColorSequence colorSeq){
+        if(displayingSequence == false){
+            currColorSeq = colorSeq;
+            displayingSequence = true;
+            begin = clock();
+        }
+        clock_t now = clock();
+        float secs = (float)(now - begin)/CLOCKS_PER_SEC;
+        int msecs = 1000 * secs;
+        
+        std::cout << msecs << " " << std::endl;
+
+        if((currColorSeq.size() * 350) <= msecs){
+            display_buttons(markers);
+            displayingSequence = false;
+            return;
+        }
+        int index = msecs / 350;   
+        display_buttons(markers, msecs < index*50 + (index+1)*300?currColorSeq.at(index):0);
+    }
+    void setMarkers(std::vector<Marker> markers){
+        this->markers = markers;
+    }
+};
 
 int main(int argc, char* argv[])
 {
@@ -262,6 +289,8 @@ int main(int argc, char* argv[])
     
     bool buttonPressed = false;
 
+    MultimediaDisplayCallbacks mdc;
+    game.setDisplayCallback(&mdc);
     while (!glfwWindowShouldClose(window)){
 		markers.clear();
         img_bgr = getCameraImage();
@@ -272,8 +301,11 @@ int main(int argc, char* argv[])
 
         /* Track a marker */
 		markerTracker.findMarker(img_bgr, markers);
-        display_buttons(markers);
-        
+        if(!displayingSequence)
+            display_buttons(markers);
+        else
+            mdc.colorSequence(ColorSequence());
+        mdc.setMarkers(markers);
         if(markers.size() == BUTTON_SIZE){
             buttonPressed = false;
         }else{

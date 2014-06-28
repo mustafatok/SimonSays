@@ -4,7 +4,7 @@
 //
 
 #include "DrawPrimitives.hpp"
-
+#include <iostream>
 
 void drawCube() {
     
@@ -58,19 +58,21 @@ void drawCube() {
     
     glFlush();
 }
-void drawButton(int const colorId){
+void drawButton(int const colorId, int const highlightColorId){
 	glScalef(0.03, 0.03, 0.03);
     
     if(colorId==COLOR_RED)
-        glColor4f( 1.0, 0.0, 0.0, 1.0 );
+        glColor4f( 1.0, (highlightColorId == COLOR_RED ? 1 : 0.0), (highlightColorId == COLOR_RED ? 1 : 0.0), 1.0 );
     else if(colorId==COLOR_GREEN)
-        glColor4f( 0.0, 1.0, 0.0, 1.0 );
+        glColor4f( (highlightColorId == COLOR_GREEN ? 1 : 0.0), 1.0, (highlightColorId == COLOR_GREEN ? 1 : 0.0), 1.0 );
     else if(colorId==COLOR_BLUE)
-        glColor4f( 0.0, 0.0, 1.0, 1.0 );
+        glColor4f( (highlightColorId == COLOR_BLUE ? 1 : 0.0), (highlightColorId == COLOR_BLUE ? 1 : 0.0), 1.0, 1.0 );
     else if(colorId==COLOR_YELLOW)
-        glColor4f( 1.0, 1.0, 0.0, 1.0 );
+        glColor4f( 1.0, 1.0, (highlightColorId == COLOR_YELLOW ? 1 : 0.0), 1.0 );
     else if(colorId==START_MARKER)
         glColor4f( 0.0, 1.0, 1.0, 1.0 );
+    float currentColor[4];
+    glGetFloatv(GL_CURRENT_COLOR,currentColor);
     glTranslatef( 0.0, 0.0, 0.0 );
     drawCube(  );
 }

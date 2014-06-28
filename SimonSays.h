@@ -12,10 +12,10 @@
 
 class DisplayCallbacks{
 public:
-    void countDown();
-    void colorSequence(ColorSequence colorSeq);
-    void gameOver();
-    void score(int score);
+    virtual void countDown();
+    virtual void colorSequence(ColorSequence colorSeq);
+    virtual void gameOver();
+    virtual void score(int score);
 
 };
 class SimonSays : public DisplayCallbacks{

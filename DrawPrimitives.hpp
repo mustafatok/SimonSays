@@ -17,5 +17,5 @@
 typedef std::vector<int> ColorSequence;
 
 void drawCube();
-void drawButton(int const colorId);
+void drawButton(int const colorId, int const highlightColorId);
 #endif
