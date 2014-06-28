@@ -31,7 +31,7 @@ SimonSays::SimonSays(){
     srand(time(NULL));
     displayCallback = this;
     setStarted(false);
-    _inputState = 0;
+    _inputState = false;
     _row = -1;
     _score = 0;
     _gameOver = false;
@@ -42,6 +42,10 @@ bool SimonSays::isStarted(){
 void SimonSays::setStarted(bool started){
     if (started == true) {
         colorSeq.clear();
+        _row = -1;
+        _score = 0;
+        _gameOver = false;
+        _inputState = false;
     }
     this->_isStarted = started;
 }

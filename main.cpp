@@ -16,7 +16,6 @@
 #include "PoseEstimation.hpp"
 #include "MarkerTracker.hpp"
 #include "SimonSays.h"
-#include <thread>
 #define BUTTON_SIZE 5
 
 using namespace std;
@@ -225,7 +224,7 @@ public:
         float secs = (float)(now - begin)/CLOCKS_PER_SEC;
         int msecs = 1000 * secs;
         
-        std::cout << msecs << " " << std::endl;
+//        std::cout << msecs << " " << std::endl;
 
         if((currColorSeq.size() * 350) <= msecs){
             display_buttons(markers);
@@ -235,7 +234,7 @@ public:
         int index = msecs / 350;
         bool state = msecs < (index*50 + (index+1)*300);
         
-        std::cout << "Msecs: " << msecs << " " << state << std::endl;
+//        std::cout << "Msecs: " << msecs << " " << state << std::endl;
         display_buttons(markers, state?currColorSeq.at(index):0);
     }
     void setMarkers(std::vector<Marker> markers){
