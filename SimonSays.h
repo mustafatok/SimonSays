@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include "DrawPrimitives.hpp"
+#include <sstream>
 
 class DisplayCallbacks{
 public:
@@ -41,7 +42,7 @@ public:
     void handleInput(int buttonId);
     void setDisplayCallback(DisplayCallbacks* displayCallback);
     void keyboardHandler(int Key);
-
+    std::string getStatisticsScreen();
 
 };
 

@@ -298,12 +298,11 @@ int main(int argc, char* argv[])
         if(img_bgr.empty()){
             continue;
         }
-        stringstream ss;
-        ss << "Score: " << game.score();
+        string statistics = game.getStatisticsScreen();
         int baseline=0;
-        cv::Size textSize = cv::getTextSize(ss.str(), cv::FONT_HERSHEY_DUPLEX, 1, 1, &baseline);
+        cv::Size textSize = cv::getTextSize(statistics, cv::FONT_HERSHEY_DUPLEX, 1, 1, &baseline);
         
-        cv::putText(img_bgr,  ss.str(), cv::Point(3,(camera_height - textSize.height/2 - 3)), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(255,255,255));
+        cv::putText(img_bgr,  statistics, cv::Point(3,(camera_height - textSize.height/2 - 3)), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(255,255,255));
         display_background(window, img_bgr);
 
         /* Track a marker */
