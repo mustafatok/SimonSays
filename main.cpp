@@ -15,7 +15,10 @@
 #include "PoseEstimation.hpp"
 #include "MarkerTracker.hpp"
 #include "SimonSays.h"
+<<<<<<< HEAD
 #include "GL\glut.h"
+=======
+>>>>>>> origin/master
 #define BUTTON_SIZE 5
 
 using namespace std;
@@ -279,7 +282,10 @@ public:
 };
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 int main(int argc, char* argv[])
 {
 
@@ -341,7 +347,10 @@ int main(int argc, char* argv[])
         cv::Size textSize = cv::getTextSize(statistics, cv::FONT_HERSHEY_DUPLEX, 1, 1, &baseline);
         
         cv::putText(img_bgr,  statistics, cv::Point(3,(camera_height - textSize.height/2 - 3)), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(255,255,255));
+<<<<<<< HEAD
 		
+=======
+>>>>>>> origin/master
         display_background(window, img_bgr);
         /* Track a marker */
 		markerTracker.findMarker(img_bgr, markers);
