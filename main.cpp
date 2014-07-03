@@ -8,7 +8,6 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
-
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -16,7 +15,7 @@
 #include "PoseEstimation.hpp"
 #include "MarkerTracker.hpp"
 #include "SimonSays.h"
-#include <thread>
+#include "GL\glut.h"
 #define BUTTON_SIZE 5
 
 using namespace std;
@@ -84,6 +83,44 @@ void initGL(int argc, char *argv[])
     
 }
 
+//  Draws a string at the specified coordinates.
+//-------------------------------------------------------------------------
+void printw(float x, float y, float z, char* format, ...)
+{
+	va_list args;   //  Variable argument list
+	int len;        // String length
+	int i;          //  Iterator
+	char * text;    // Text
+
+	//  Initialize a variable argument list
+	va_start(args, format);
+
+	//  Return the number of characters in the string referenced the list of arguments.
+	// _vscprintf doesn't count terminating '\0' (that's why +1)
+	len = _vscprintf(format, args) + 1;
+
+	//  Allocate memory for a string of the specified size
+	text = (char*)malloc(len * sizeof(char));
+
+	//  Write formatted output using a pointer to the list of arguments
+	vsprintf_s(text, len, format, args);
+
+	//  End using variable argument list
+	va_end(args);
+
+	//  Specify the raster position for pixel operations.
+	glColor3f(0.5, 0.5, 0.5);
+	glRasterPos3f(x, y, z);
+
+	//  Draw the characters one by one
+	for (i = 0; text[i] != '\0'; i++)
+		//font_style
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
+
+	//  Free the allocated memory for the string
+	free(text);
+}
+
 void transpose(float resultMatrix[16], float (&resultTransposedMatrix)[16]){
     for (int x=0; x<4; ++x)
 		for (int y=0; y<4; ++y)
@@ -111,10 +148,10 @@ void display_background(GLFWwindow* window, const cv::Mat &img_bgr){
     
     glRasterPos2i( 0, camera_height-1 );
 //    Mac Code: Commented on Windows
-    glDrawPixels( camera_width, camera_height, GL_BGR, GL_UNSIGNED_BYTE, bkgnd );
+//    glDrawPixels( camera_width, camera_height, GL_BGR, GL_UNSIGNED_BYTE, bkgnd );
     
 //    Windows Code: Commented on Mac
-//    glDrawPixels( camera_width, camera_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, bkgnd );
+    glDrawPixels( camera_width, camera_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, bkgnd );
     
     glPopMatrix();
     glEnable(GL_DEPTH_TEST);
@@ -127,6 +164,7 @@ void display_buttons(std::vector<Marker> &markers, int highlightColorId = 0){
 	for(int i=0; i<markers.size(); i++){
         transpose(markers[i].resultMatrix, resultTransposedMatrix);
         glLoadMatrixf( resultTransposedMatrix );
+		printw(2, 2, 2, "hello");
         drawButton(markers[i].colorID, highlightColorId);
 	}
     
@@ -156,16 +194,15 @@ cv::Mat getCameraImage(){
     /* Capture here */
     cap >> img_bgr;
     
-    resize(img_bgr, tmp, cv::Size(640, 480));
-    img_bgr = tmp;
-    
+    resize(img_bgr, tmp, cv::Size(camera_width, camera_height));
     
     if(img_bgr.empty()){
         std::cout << "Could not query frame. Trying to reinitialize." << std::endl;
         initVideoStream(cap);
         cv::waitKey(1000); /// Wait for one sec.
     }
-    return img_bgr;
+    img_bgr.empty();
+    return tmp;
 }
 
 int buttonToKeyAdapter(int buttonId){
@@ -203,9 +240,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
    	game.keyboardHandler(key);
 }
-void task(){
-    ;
-}
 
 class MultimediaDisplayCallbacks : public DisplayCallbacks{
 private:
@@ -226,20 +260,25 @@ public:
         float secs = (float)(now - begin)/CLOCKS_PER_SEC;
         int msecs = 1000 * secs;
         
-        std::cout << msecs << " " << std::endl;
+//        std::cout << msecs << " " << std::endl;
 
         if((currColorSeq.size() * 350) <= msecs){
             display_buttons(markers);
             displayingSequence = false;
             return;
         }
-        int index = msecs / 350;   
-        display_buttons(markers, msecs < index*50 + (index+1)*300?currColorSeq.at(index):0);
+        int index = msecs / 350;
+        bool state = msecs < (index*50 + (index+1)*300);
+        
+//        std::cout << "Msecs: " << msecs << " " << state << std::endl;
+        display_buttons(markers, state?currColorSeq.at(index):0);
     }
     void setMarkers(std::vector<Marker> markers){
         this->markers = markers;
     }
 };
+
+
 
 int main(int argc, char* argv[])
 {
@@ -297,8 +336,13 @@ int main(int argc, char* argv[])
         if(img_bgr.empty()){
             continue;
         }
+        string statistics = game.getStatisticsScreen();
+        int baseline=0;
+        cv::Size textSize = cv::getTextSize(statistics, cv::FONT_HERSHEY_DUPLEX, 1, 1, &baseline);
+        
+        cv::putText(img_bgr,  statistics, cv::Point(3,(camera_height - textSize.height/2 - 3)), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(255,255,255));
+		
         display_background(window, img_bgr);
-
         /* Track a marker */
 		markerTracker.findMarker(img_bgr, markers);
         if(!displayingSequence)
