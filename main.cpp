@@ -15,10 +15,7 @@
 #include "PoseEstimation.hpp"
 #include "MarkerTracker.hpp"
 #include "SimonSays.h"
-<<<<<<< HEAD
 #include "GL\glut.h"
-=======
->>>>>>> origin/master
 #define BUTTON_SIZE 5
 
 using namespace std;
@@ -90,38 +87,16 @@ void initGL(int argc, char *argv[])
 //-------------------------------------------------------------------------
 void printw(float x, float y, float z, char* format, ...)
 {
-	va_list args;   //  Variable argument list
-	int len;        // String length
-	int i;          //  Iterator
-	char * text;    // Text
-
-	//  Initialize a variable argument list
-	va_start(args, format);
-
-	//  Return the number of characters in the string referenced the list of arguments.
-	// _vscprintf doesn't count terminating '\0' (that's why +1)
-	len = _vscprintf(format, args) + 1;
-
-	//  Allocate memory for a string of the specified size
-	text = (char*)malloc(len * sizeof(char));
-
-	//  Write formatted output using a pointer to the list of arguments
-	vsprintf_s(text, len, format, args);
-
-	//  End using variable argument list
-	va_end(args);
 
 	//  Specify the raster position for pixel operations.
 	glColor3f(0.5, 0.5, 0.5);
 	glRasterPos3f(x, y, z);
 
 	//  Draw the characters one by one
-	for (i = 0; text[i] != '\0'; i++)
+	for (int i = 0; format[i] != '\0'; i++)
 		//font_style
-		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
-
-	//  Free the allocated memory for the string
-	free(text);
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, format[i]);
+	
 }
 
 void transpose(float resultMatrix[16], float (&resultTransposedMatrix)[16]){
@@ -167,7 +142,7 @@ void display_buttons(std::vector<Marker> &markers, int highlightColorId = 0){
 	for(int i=0; i<markers.size(); i++){
         transpose(markers[i].resultMatrix, resultTransposedMatrix);
         glLoadMatrixf( resultTransposedMatrix );
-		printw(2, 2, 2, "hello");
+		printw(0, 0, 0.1, "hello");
         drawButton(markers[i].colorID, highlightColorId);
 	}
     
@@ -282,10 +257,7 @@ public:
 };
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 int main(int argc, char* argv[])
 {
 
@@ -347,10 +319,7 @@ int main(int argc, char* argv[])
         cv::Size textSize = cv::getTextSize(statistics, cv::FONT_HERSHEY_DUPLEX, 1, 1, &baseline);
         
         cv::putText(img_bgr,  statistics, cv::Point(3,(camera_height - textSize.height/2 - 3)), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(255,255,255));
-<<<<<<< HEAD
 		
-=======
->>>>>>> origin/master
         display_background(window, img_bgr);
         /* Track a marker */
 		markerTracker.findMarker(img_bgr, markers);
