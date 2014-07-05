@@ -6,7 +6,7 @@
 #include "DrawPrimitives.hpp"
 #include <iostream>
 void drawCube() {
-    
+	
     // FRONT
     glBegin(GL_POLYGON);
     glVertex3f(  0.5, -0.5, -0.5 );
@@ -70,5 +70,23 @@ void drawButton(int const colorId, int const highlightColorId){
         glColor4f( 1.0, 1.0, (highlightColorId == COLOR_YELLOW ? 1 : 0.0), 1.0 );
     else if(colorId==START_MARKER)
         glColor4f( 0.0, 1.0, 1.0, 1.0 );
-    drawCube(  );
+    drawCube();
+}
+
+void drawHeart(){
+	
+	//glRotatef(90, 0, 1, 0);
+	glBegin(GL_POLYGON);
+	glColor4f(1, 0, 0, 1);
+	glVertex3f(0, -0.15, 0.5);//bottom
+	glVertex3f(-0.2, 0.1, 0.5);
+	glVertex3f(-0.18, 0.16, 0.5);
+	glVertex3f(-0.1, 0.2, 0.5);
+	glVertex3f(0, 0.15, 0.5);
+	glVertex3f(0.1, 0.2, 0.5);
+	glVertex3f(0.18, 0.16, 0.5);
+	glVertex3f(0.2, 0.1, 0.5);
+	glEnd();
+	glFlush();
+
 }

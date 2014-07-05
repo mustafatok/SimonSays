@@ -104,6 +104,28 @@ void transpose(float resultMatrix[16], float (&resultTransposedMatrix)[16]){
 		for (int y=0; y<4; ++y)
 			resultTransposedMatrix[x*4+y] = resultMatrix[y*4+x];
 }
+void putlives()
+{
+	glPushMatrix();
+	glTranslatef(0.33, 0.25, 0);
+	glRotatef(180, 0, 1, 0);
+	glScalef(0.1, 0.1, 1);
+	switch (game.getLives()){
+	case 3:
+		drawHeart();
+	case 2:
+		glTranslatef(0.5, 0, 0);
+		drawHeart();
+	case 1:
+		glTranslatef(0.5, 0, 0);
+		drawHeart();
+	default:
+		glPopMatrix();
+		break;
+	}
+
+
+}
 void display_background(GLFWwindow* window, const cv::Mat &img_bgr){
     memcpy( bkgnd, img_bgr.data, sizeof(bkgnd) );
     
@@ -130,8 +152,11 @@ void display_background(GLFWwindow* window, const cv::Mat &img_bgr){
     
 //    Windows Code: Commented on Mac
     glDrawPixels( camera_width, camera_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, bkgnd );
-    
+
     glPopMatrix();
+	
+	putlives();//display hearts on the upper right
+
     glEnable(GL_DEPTH_TEST);
 
 }
@@ -342,7 +367,7 @@ int main(int argc, char* argv[])
             }
         }
         
-		      
+
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
         
