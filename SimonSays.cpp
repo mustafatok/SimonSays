@@ -167,8 +167,16 @@ void SimonSays::setDisplayCallback(DisplayCallbacks* displayCallback){
 std::string SimonSays::getStatisticsScreen(){
     std::stringstream ss;
     ss << "Score: " << score();
-    std::string gameover = _gameOver ? " - Game Over":"";
-    ss << gameover;
+	std::string gameover = "";
+	if (_gameOver){
+		if (score() > 19)
+			gameover = " player.takeGummyBear(); ";
+		else
+			gameover = " - Game Over";
+	}
+
+	ss << gameover;
+    
     return ss.str();
 }
 
