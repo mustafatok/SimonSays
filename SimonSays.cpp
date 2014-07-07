@@ -169,19 +169,6 @@ std::string SimonSays::getStatisticsScreen(){
     ss << "Score: " << score();
     std::string gameover = _gameOver ? " - Game Over":"";
     ss << gameover;
-    std::string tmp = "";
-    switch (_lives) {
-        case 3:
-            tmp += " |";
-        case 2:
-            tmp += " |";
-        case 1:
-            tmp += " |";
-        default:
-            break;
-    }
-    tmp = (tmp != "" ? " - " + tmp : "");
-    ss << tmp;
     return ss.str();
 }
 

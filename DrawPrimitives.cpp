@@ -59,7 +59,7 @@ void drawCube() {
 }
 void drawButton(int const colorId, int const highlightColorId){
 	glScalef(0.03, 0.03, 0.03);
-    
+
     if(colorId==COLOR_RED)
         glColor4f( 1.0, (highlightColorId == COLOR_RED ? 1 : 0.0), (highlightColorId == COLOR_RED ? 1 : 0.0), 1.0 );
     else if(colorId==COLOR_GREEN)
@@ -71,4 +71,22 @@ void drawButton(int const colorId, int const highlightColorId){
     else if(colorId==START_MARKER)
         glColor4f( 0.0, 1.0, 1.0, 1.0 );
     drawCube(  );
+}
+
+void drawHeart(){
+
+	//glRotatef(90, 0, 1, 0);
+	glBegin(GL_POLYGON);
+	glColor4f(1, 0, 0, 1);
+	glVertex3f(0, -0.15, 0.5);//bottom
+	glVertex3f(-0.2, 0.1, 0.5);
+	glVertex3f(-0.18, 0.16, 0.5);
+	glVertex3f(-0.1, 0.2, 0.5);
+	glVertex3f(0, 0.15, 0.5);
+	glVertex3f(0.1, 0.2, 0.5);
+	glVertex3f(0.18, 0.16, 0.5);
+	glVertex3f(0.2, 0.1, 0.5);
+	glEnd();
+	glFlush();
+
 }

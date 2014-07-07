@@ -10,6 +10,7 @@
 #include <vector>
 #include "DrawPrimitives.hpp"
 #include <sstream>
+#include <time.h>
 
 class DisplayCallbacks{
 public:

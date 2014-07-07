@@ -82,6 +82,30 @@ void initGL(int argc, char *argv[])
     
 }
 
+void putlives()
+{
+	glPushMatrix();
+	glTranslatef(0.33, 0.25, 0);
+	glRotatef(180, 0, 1, 0);
+	glScalef(0.1, 0.1, 1);
+	switch (game.getLives()){
+	case 3:
+
+		drawHeart();
+	case 2:
+		glTranslatef(0.5, 0, 0);
+		drawHeart();
+	case 1:
+		glTranslatef(0.5, 0, 0);
+		drawHeart();
+	default:
+		glPopMatrix();
+		break;
+	}
+
+
+}
+
 void transpose(float resultMatrix[16], float (&resultTransposedMatrix)[16]){
     for (int x=0; x<4; ++x)
 		for (int y=0; y<4; ++y)
@@ -109,12 +133,13 @@ void display_background(GLFWwindow* window, const cv::Mat &img_bgr){
     
     glRasterPos2i( 0, camera_height-1 );
 //    Mac Code: Commented on Windows
-    glDrawPixels( camera_width, camera_height, GL_BGR, GL_UNSIGNED_BYTE, bkgnd );
+//    glDrawPixels( camera_width, camera_height, GL_BGR, GL_UNSIGNED_BYTE, bkgnd );
     
 //    Windows Code: Commented on Mac
-//    glDrawPixels( camera_width, camera_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, bkgnd );
+    glDrawPixels( camera_width, camera_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, bkgnd );
     
     glPopMatrix();
+
     glEnable(GL_DEPTH_TEST);
 
 }
@@ -301,6 +326,8 @@ int main(int argc, char* argv[])
         
         cv::putText(img_bgr,  statistics, cv::Point(3,(camera_height - textSize.height/2 - 3)), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(255,255,255));
         display_background(window, img_bgr);
+		putlives();//display hearts on the upper right
+
         /* Track a marker */
 		markerTracker.findMarker(img_bgr, markers);
         if(!displayingSequence)
