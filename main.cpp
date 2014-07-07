@@ -90,13 +90,12 @@ void putlives()
 	glScalef(0.1, 0.1, 1);
 	switch (game.getLives()){
 	case 3:
-
 		drawHeart();
-	case 2:
 		glTranslatef(0.5, 0, 0);
+	case 2:		
 		drawHeart();
-	case 1:
 		glTranslatef(0.5, 0, 0);
+	case 1:		
 		drawHeart();
 	default:
 		glPopMatrix();
